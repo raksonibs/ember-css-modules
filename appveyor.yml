@@ -1,0 +1,13 @@
+install:
+  - ps: Install-Product node 6
+  - yarn
+
+cache:
+  - '%APPDATA%\npm-cache'
+  - '%LOCALAPPDATA%\Yarn'
+  - node_modules
+
+test_script:
+  - cmd: yarn run test-win
+
+build: off

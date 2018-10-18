@@ -1,0 +1,46 @@
+---
+language: node_js
+node_js:
+  - "6"
+
+sudo: true
+dist: trusty
+
+addons:
+  chrome: stable
+
+cache:
+  directories:
+    - node_modules
+    - $HOME/.cache/yarn
+
+env:
+  global:
+    - JOBS=1
+  matrix:
+    - NODE_TESTS=true
+    - EMBER_TRY_SCENARIO=ember-lts-2.12
+    - EMBER_TRY_SCENARIO=ember-lts-2.16
+    - EMBER_TRY_SCENARIO=ember-lts-2.18
+    - EMBER_TRY_SCENARIO=ember-release
+    - EMBER_TRY_SCENARIO=ember-beta
+    - EMBER_TRY_SCENARIO=ember-canary
+    - EMBER_TRY_SCENARIO=ember-default
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: EMBER_TRY_SCENARIO=ember-canary
+
+before_script:
+  - yarn global add bower
+  - yarn run install-all
+
+script:
+  - yarn lint:js
+  - if [[ $NODE_TESTS == true ]]; then
+      npm install -g npm;
+      yarn run test-node;
+    else
+      node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO test;
+    fi
